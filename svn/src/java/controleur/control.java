@@ -6,10 +6,15 @@ package controleur;
 
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.util.Collection;
+import javax.servlet.ServletConfig;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import modele.Departement;
+import modele.Medecin;
+import modele.Pays;
 
 /**
  *
@@ -17,35 +22,32 @@ import javax.servlet.http.HttpServletResponse;
  */
 public class control extends HttpServlet {
 
-    /**
-     * Processes requests for both HTTP
-     * <code>GET</code> and
-     * <code>POST</code> methods.
-     *
-     * @param request servlet request
-     * @param response servlet response
-     * @throws ServletException if a servlet-specific error occurs
-     * @throws IOException if an I/O error occurs
-     */
+    private Pays p;
+
+    
+    @Override
+    public void init(ServletConfig config) throws ServletException {
+        super.init(config);
+        p = new Pays();
+    }
+
     protected void processRequest(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-        response.setContentType("text/html;charset=UTF-8");
-        PrintWriter out = response.getWriter();
-        try {
-            /*
-             * TODO output your page here. You may use following sample code.
-             */
-            out.println("<html>");
-            out.println("<head>");
-            out.println("<title>Servlet control</title>");            
-            out.println("</head>");
-            out.println("<body>");
-            out.println("<h1>Servlet control at " + request.getContextPath() + "</h1>");
-            out.println("</body>");
-            out.println("</html>");
-        } finally {            
-            out.close();
+
+        String dep = request.getParameter("dep");
+        String page;
+
+        if (dep !=null){
+            Collection<Medecin> lesm = p.getLeDep("dep").getLesMeds();
+            request.setAttribute("listeM", lesm);
+            page = "listeMedecin.jsp";
         }
+        else {
+            Collection<Departement> lesd = p.getLesDeps();;
+            request.setAttribute("listeD", lesd);
+            page = "listeDepartement.jsp";
+        }
+        request.getRequestDispatcher(page).forward(request, response);
     }
 
     // <editor-fold defaultstate="collapsed" desc="HttpServlet methods. Click on the + sign on the left to edit the code.">
