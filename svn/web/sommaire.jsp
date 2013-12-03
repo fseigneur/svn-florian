@@ -19,10 +19,13 @@
             <?php echo $_SESSION['prenom']."  ".$_SESSION['nom']  ?>
         </li> --->
         <li class="smenu">
-            <a href = "Controleur?action=listeParDep">Liste des Départements</a>
+            <a href = "control?action=listeParDep">Liste des Départements</a>
         </li>
         <li class="smenu">
-            <a href = "Controleur?action=listeParNom">Recherche d'un médecin</a>
+            <a href = "control?action=listeParNom">Recherche d'un médecin</a>
+        </li>
+        <li class="smenu">
+            <a href = "control?action=listeMedecinParSpe">Recherche d'un médecin par spécialité</a>
         </li>
     </ul>
 

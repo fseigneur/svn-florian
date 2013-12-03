@@ -8,7 +8,7 @@ package modele;
  *
  * @author fseigneur
  */
-public class Medecin {
+public class Medecin implements Comparable<Medecin>{
 
     private String nom;
     private String prenom;
@@ -16,14 +16,16 @@ public class Medecin {
     private String tel;
     private String spe;
     private String id;
+    private String dep;
 
-    public Medecin(String nom, String prenom, String adresse, String tel, String spe, String id) {
+    public Medecin(String nom, String prenom, String adresse, String tel, String spe, String id, String dep) {
         this.nom = nom;
         this.prenom = prenom;
         this.adresse = adresse;
         this.tel = tel;
         this.spe = spe;
         this.id = id;
+        this.dep = dep;
     }
 
     public String getAdresse() {
@@ -44,5 +46,19 @@ public class Medecin {
 
     public String getTel() {
         return tel;
+    }
+    
+    public String getLeDep() {
+        return dep;
+    }
+    
+    @Override
+    public int compareTo(Medecin m) {
+        if(nom.compareTo(m.nom) == 0) {
+            return prenom.compareTo(m.prenom);
+        }
+        else {
+            return nom.compareTo(m.nom);
+        }
     }
 }
