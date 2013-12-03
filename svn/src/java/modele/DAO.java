@@ -10,6 +10,7 @@ import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.Collection;
 import java.util.HashSet;
+import java.util.TreeSet;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -21,28 +22,70 @@ public class DAO {
 
     public static Collection<Departement> getLesDeps() {
 
-        Collection<Departement> lesDeps = new HashSet<Departement>();
-        
-        try {
-            Connection con = Connect.get();
-            Statement req;
-            req = con.createStatement();
-            ResultSet rs = req.executeQuery("select distinct departement from medecin;");
-            while (rs.next()) {
-                String departement = rs.getString("departement");
-                Collection<Medecin> lesMeds = new HashSet<Medecin>();
-                Statement req2;
-                req2 = con.createStatement();
-                ResultSet rs2 = req2.executeQuery("select * from medecin where departement =" + departement);
 
-                while (rs2.next()) {
-                    lesMeds.add(new Medecin(rs2.getString("nom"), rs2.getString("prenom"), rs2.getString("adresse"), rs2.getString("tel"), rs2.getString("specialitecomplementaire"), rs2.getString("id")));
-                }
-                lesDeps.add(new Departement(rs.getString("departement"), lesMeds));
-            }
+        Collection<Departement> lesDeps = new TreeSet<Departement>();
+        try {
+            Statement req;
+            Connection con = Connect.get();          
+            req = con.createStatement();    
+            ResultSet rs;
+            rs = req.executeQuery("Select DISTINCT departement from medecin order by departement ASC");
+            //Parcours
+            while (rs.next()) {
+                String numDep = rs.getString(1);
+                lesDeps.add(new Departement(numDep)); 
+                }                               
+            rs.close();
+            req.close();
         } catch (SQLException ex) {
-            Logger.getLogger(DAO.class.getName()).log(Level.SEVERE, null, ex);
+            Logger.getLogger(Pays.class.getName()).log(Level.SEVERE, null, ex);
         }
         return lesDeps;
     }
-}
+ 
+    public static Collection<Spe> getLesSpes() {
+        Collection<Spe> lesSpe = new TreeSet<Spe>();
+        try {
+            Statement req;
+            Connection con = Connect.get();          
+            req = con.createStatement();    
+            ResultSet rs;
+            rs = req.executeQuery("Select DISTINCT specialitecomplementaire from medecin where specialitecomplementaire is NOT NULL");
+            while (rs.next()) {
+                String spe = rs.getString(1);
+                Spe uneSpe = new Spe(spe);
+                lesSpe.add(uneSpe);      
+            }
+            rs.close();
+            req.close();
+        } catch (SQLException ex) {
+            Logger.getLogger(Pays.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        return lesSpe;
+    }
+    
+    public static Collection<Medecin> getLesMeds() {
+        Collection<Medecin> lesMed = new TreeSet<Medecin>();
+        try {
+            Statement req;
+            Connection con = Connect.get();          
+            req = con.createStatement();    
+            ResultSet rs;
+            rs = req.executeQuery("Select * from medecin;");
+             while (rs.next()) {
+                 String id = rs.getString("id");
+                    String nom = rs.getString("nom");
+                    String prenom = rs.getString("prenom");
+                    String adresse = rs.getString("adresse");
+                    String tel = rs.getString("tel");
+                    String spe = rs.getString("specialitecomplementaire");
+                    String dep = rs.getString("departement");
+                    lesMed.add(new Medecin(nom, prenom, adresse, tel, spe, id, dep));
+             } 
+        } catch (SQLException ex) {
+            Logger.getLogger(Pays.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        return lesMed;
+    }
+        
+}   

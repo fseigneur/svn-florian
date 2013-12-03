@@ -7,14 +7,14 @@ package controleur;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.util.Collection;
+import java.util.TreeSet;
 import javax.servlet.ServletConfig;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import modele.Departement;
-import modele.Medecin;
-import modele.Pays;
+import modele.*;
+
 
 /**
  *
@@ -24,7 +24,6 @@ public class control extends HttpServlet {
 
     private Pays p;
 
-    
     @Override
     public void init(ServletConfig config) throws ServletException {
         super.init(config);
@@ -35,19 +34,59 @@ public class control extends HttpServlet {
             throws ServletException, IOException {
 
         String dep = request.getParameter("dep");
-        String page;
+        String action = request.getParameter("action");
+        String nomSpe = request.getParameter("nomSpe");
+        String page = "";
+        if (action == null) {
+            page = "menu.jsp";
 
-        if (dep !=null){
-            Collection<Medecin> lesm = p.getLeDep("dep").getLesMeds();
-            request.setAttribute("listeM", lesm);
-            page = "listeMedecin.jsp";
-        }
-        else {
-            Collection<Departement> lesd = p.getLesDeps();;
-            request.setAttribute("listeD", lesd);
-            page = "listeDepartement.jsp";
+
+
+        } else if (action.equals("listeParDep")) {
+            if (dep == null) {
+                Collection<Departement> listeDep = p.getLesDeps();
+                request.setAttribute("listeD", listeDep);
+                page = "listeDepartement.jsp";
+            } else {
+                Collection<Medecin> listeMed = p.getLeDep(dep).getLesMeds();
+                request.setAttribute("listeM", listeMed);
+                page = "listeMedecin.jsp";
+
+            }
+
+        } else if (action.equals("listeParNom")) {
+            page = "rechercheNom.jsp";
+            String nomMedecin = request.getParameter("nomMedecin");
+            if (nomMedecin != null) {
+                Collection<Medecin> lesMeds = new TreeSet<Medecin>();
+                for (Departement Dep : p.getLesDeps()) {
+                    for (Medecin m : Dep.getLesMeds()) {
+                        if (m.getNom().startsWith(nomMedecin)) {
+                            lesMeds.add(m);
+                        }
+                    }
+                }
+                request.setAttribute("listeM", lesMeds);
+
+            }
+
+        }else if (action.equals("listeMedecinParSpe")) {
+            
+            if (nomSpe == null) {
+                Collection<Spe> ls = p.getLesSpes();
+                request.setAttribute("listeS", ls);
+                page = "listeSpecialite.jsp";
+            } else {
+                Collection<Medecin> lm = p.getLaSpe(nomSpe).getLesMeds();
+                request.setAttribute("listeM", lm);
+                request.setAttribute("nomSpe", nomSpe);
+                page = "listeMedecinParSpe.jsp";
+            }
+        } else {
+            page = "index.jsp";
         }
         request.getRequestDispatcher(page).forward(request, response);
+
     }
 
     // <editor-fold defaultstate="collapsed" desc="HttpServlet methods. Click on the + sign on the left to edit the code.">

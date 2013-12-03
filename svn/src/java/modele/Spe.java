@@ -12,29 +12,28 @@ import java.util.TreeSet;
  *
  * @author fseigneur
  */
-public class Departement implements Comparable <Departement> {
-
+public class Spe implements Comparable<Spe> {
     private String num;
-    private Collection<Medecin> lesMeds = new TreeSet<Medecin>();
+    private Collection<Medecin> lesMeds=new TreeSet<Medecin>();
 
-    public Departement(String num) {
+    public Spe(String num) {
         this.num = num;
-    }
-
-    public String getNum() {
-        return num;
     }
 
     public Collection<Medecin> getLesMeds() {
         return lesMeds;
     }
 
-    @Override
-    public int compareTo(Departement t) {
-        return num.compareTo(t.num);
+    public String getNum() {
+        return num;
     }
-   
-    void addUnMed(Medecin unMed) {
+
+    public void addUnMed(Medecin unMed) {
         lesMeds.add(unMed);
+    }
+    
+    @Override
+    public int compareTo(Spe t) {
+        return num.compareTo(t.num);
     }
 }
